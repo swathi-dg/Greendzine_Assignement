@@ -1,0 +1,100 @@
+
+#include<stdio.h>
+
+volatile uint8_t g_ReadDIpinSts;
+volatile uint8_t g_AppDIpinStatus;
+
+
+Enum Pin_Num{
+				Pin_Num0 = 0,
+				Pin_Num1,
+				Pin_Num2,
+				Pin_Num3,
+				Pin_Num4,
+				Pin_Num5,
+				Pin_Num6,
+				Pin_Num7,
+				Pin_Num8,
+				Pin_Num9,
+				Pin_Num10,
+				Pin_Num11,
+				Pin_Num12,
+				Pin_Num13,
+				Pin_Num14,
+				Pin_Num15
+			}Pin_Num;
+
+
+typedef struct
+{
+	uint8_t GPIO_A;
+	uint8_t GPIO_B;
+	uint8_t GPIO_C;
+	uint8_t GPIO_D;
+	uint8_t GPIO_E;
+	uint8_t GPIO_F;
+	uint8_t GPIO_G;
+	uint8_t GPIO_H;
+	uint8_t GPIO_I;
+}GPIO_Port;
+
+typedef struct{
+	uint8_t GPIO_PinMode;
+	Uint8_t GPIO_PinSpeed;
+	uint8_t GPIO_PinPuPdControl;
+	uint8_t GPIO_IDR
+	
+}GPIO_PinConfig;
+
+GPIO_PinConfig *GPIO_Port = BaseAddress;
+
+
+uint8_t detDI;
+
+uint8_t DetDIpin(uint8_t *value)
+{
+	uint8_t status;
+	status = g_ReadDIpinSts;
+	
+	
+	switch (status):
+	{
+		case 0x00:
+			detDI = DI1;
+		case 0x01:
+			detDI = DI2;
+		case 0x02:
+			detDI = DI3;
+		case 0x03:
+			detDI = DI4;
+		case 0x04:
+			detDI = DI5;
+		case 0x05:
+			detDI = DI6;
+		case 0x06:
+			detDI = DI7;
+		case 0x07:
+			detDI = DI8;
+		default:
+			//None
+		}
+		return detDI;
+			
+	}
+}
+
+uint8_t GPIO_ReadInputPin(GPIO_Port *pGPIOport, Pin_Num *pNum)
+{
+	uint8_t value;
+	value = (uint8_t)((pGPIOport->IDR);
+	DetDIpin(value);
+	return value;
+	
+}
+
+uint8_t ISR_DISampling(uint8_t *g_ReadDIpinSts,GPIO_Port *pGPIOport, Pin_Num *pNum)
+{
+	g_AppDIpinStatus = GPIO_ReadInputPin(pGPIOport,pNum);
+	save_toEEProm(DI_register, g_AppDIpinStatus,sizeof(g_AppDIpinStatus));
+	
+}
